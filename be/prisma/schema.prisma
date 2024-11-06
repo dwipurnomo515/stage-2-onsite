@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  password String
+  role     Role?      @default(member)
+  Profile  Profile?
+  Product  Product[]
+  Category Category[]
+  Cart     Cart?
+  Order    Order[]
+
+  @@map("user")
+}
+
+model Profile {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  phone   String?
+  gender  Gender?
+  address String?
+  photo   String?
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId])
+  @@map("profile")
+}
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  photo       String
+  productName String
+  productDesc String
+  price       Int
+  qty         Int
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId Int
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  CartItem   CartItem[]
+  OrderItem  OrderItem[]
+
+  @@map("product")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  Product Product[]
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+
+  @@map("cart")
+}
+
+model CartItem {
+  id        Int @id @default(autoincrement())
+  productId Int
+  cartId    Int
+  quantity  Int
+
+  product Product @relation(fields: [productId], references: [id])
+  cart    Cart    @relation(fields: [cartId], references: [id])
+
+  @@map("cart_item")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+  paymentUrl  String?
+}
+
+model OrderItem {
+  id         Int     @id @default(autoincrement())
+  orderId    Int
+  order      Order   @relation(fields: [orderId], references: [id])
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int
+  totalPrice Float
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  FAILED
+}
+
+enum Role {
+  admin
+  member
+}
+
+enum Gender {
+  male
+  female
+}

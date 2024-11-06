@@ -1,0 +1,43 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: black;
+}
+
+* {
+    box-sizing: border-box;
+    /* Menyertakan padding dan border dalam total width/height */
+}
+
+/* Mengatur scrollbar untuk browser berbasis WebKit seperti Chrome dan Safari */
+::-webkit-scrollbar {
+    width: 4px;
+    /* Lebar scrollbar */
+    height: 8px;
+    /* Tinggi scrollbar */
+}
+
+/* Mengatur bagian track scrollbar */
+::-webkit-scrollbar-track {
+    background: #333;
+    /* Warna latar belakang track scrollbar */
+    border-radius: 10px;
+    /* Mengatur sudut scrollbar */
+}
+
+/* Mengatur bagian handle scrollbar */
+::-webkit-scrollbar-thumb {
+    background: grey;
+    /* Warna handle scrollbar */
+    border-radius: 10px;
+    /* Mengatur sudut handle scrollbar */
+}
+
+/* Mengatur handle scrollbar saat hover */
+::-webkit-scrollbar-thumb:hover {
+    background: grey;
+    /* Warna handle scrollbar saat hover */
+}
